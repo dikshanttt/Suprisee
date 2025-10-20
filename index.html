@@ -1,0 +1,273 @@
+<!doctype html>
+<!--
+  Birthday Surprise — single-file website (index.html)
+  - Two 'pages' in one file: Landing -> Surprise (long scroll)
+  - Mobile-friendly, responsive
+  - Mix of photos + videos (3-4 placeholders). Replace files in /assets/ with your own.
+  - Music: audio element is present (replace src later). Music will start when the "Open Your Surprise" button is clicked.
+  - Easy customization: edit CSS variables near the top.
+
+  Instructions:
+  1. Save this file as `index.html` and put your photos/videos in a folder named `assets/` (or update the paths).
+  2. Replace the audio src with your song when ready.
+  3. Open index.html in a browser (desktop or mobile). Click "Open Your Surprise" to enter the surprise page and start music+effects.
+  4. To host: upload to GitHub Pages or Netlify (drag-and-drop) — single file is enough.
+
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>To the sister who means the world to me</title>
+
+  <style>
+    /* ---------- CUSTOMIZE THESE VARIABLES ---------- */
+    :root{
+      --bg: #fff;
+      --accent: #ff7ab6; /* change to taste */
+      --accent-2: #ffd166;
+      --text: #111;
+      --muted: #666;
+      --max-width: 900px;
+    }
+    /* ---------- RESET ---------- */n
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;
+      background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;overflow-x:hidden;
+    }
+
+    /* ---------- LAYOUT ---------- */
+    .container{max-width:var(--max-width);margin:0 auto;padding:20px}
+
+    /* Landing page */
+    .landing{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px;text-align:center;background:linear-gradient(180deg,rgba(255,255,255,0.6),rgba(255,255,255,0.9));}
+    .card{width:100%;background:linear-gradient(180deg, rgba(255,255,255,0.9), #fff);border-radius:16px;padding:28px;box-shadow:0 8px 30px rgba(0,0,0,0.08)}
+    h1{font-size:clamp(20px,5vw,36px);margin:0 0 10px}
+    p.lead{margin:0 0 18px;color:var(--muted)}
+    .btn{display:inline-block;padding:12px 18px;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;font-weight:600;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,0.12);}
+
+    /* Surprise page */
+    .surprise{display:none;padding:28px 18px 80px}
+    .hero{display:flex;gap:18px;align-items:center}
+    .hero .photo{flex:0 0 120px;height:120px;border-radius:14px;background-size:cover;background-position:center;box-shadow:0 6px 24px rgba(0,0,0,0.12)}
+    .hero .text{flex:1}
+    .message{margin-top:12px;color:var(--muted)}
+
+    /* Gallery */
+    .gallery{margin-top:20px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .media{background:#eee;border-radius:12px;overflow:hidden;position:relative}
+    .media img,.media video{width:100%;height:100%;display:block;object-fit:cover}
+    .media video{min-height:120px}
+
+    /* Full-width section */
+    .section{margin-top:28px;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.6), #fff);border-radius:12px}
+
+    /* Footer */
+    footer{margin-top:28px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* small screen adjustments */
+    @media (max-width:640px){
+      .hero{flex-direction:row}
+      .gallery{grid-template-columns:repeat(2,1fr)}
+    }
+
+    /* simple fade-in animations */
+    .fade{opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s ease}
+    .fade.show{opacity:1;transform:none}
+
+    /* confetti canvas overlay */
+    #confetti{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:999}
+
+    /* audio toggle */
+    .music-toggle{position:fixed;right:16px;bottom:16px;background:rgba(255,255,255,0.95);padding:8px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.08);display:flex;gap:8px;align-items:center;z-index:1000}
+    .music-toggle button{background:none;border:0;padding:6px 10px;border-radius:8px;font-weight:600}
+
+  </style>
+</head>
+<body>
+
+  <!-- confetti canvas -->
+  <canvas id="confetti"></canvas>
+
+  <!-- AUDIO (replace src later) -->
+  <audio id="bg-audio" loop preload="auto">
+    <!-- Replace the src below with your music file (e.g. assets/music.mp3) -->
+    <source src="assets/music.mp3" type="audio/mpeg">
+    <!-- If you don't set music yet, page will still work. -->
+  </audio>
+
+  <!-- MUSIC TOGGLE -->
+  <div class="music-toggle" id="musicToggle" style="display:none">
+    <span id="musicIcon">🔊</span>
+    <button id="toggleMusicBtn">Pause</button>
+  </div>
+
+  <!-- Landing / Intro -->
+  <main class="landing" id="landing">
+    <div class="container">
+      <div class="card">
+        <h1>Shh... a small surprise</h1>
+        <p class="lead">Click the button below to open your surprise 🎁</p>
+        <a class="btn" id="openBtn" href="#">Open Your Surprise 🎉</a>
+        <p style="margin-top:12px;color:var(--muted);font-size:14px">Designed with love.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Surprise page (acts like a new page) -->
+  <div class="surprise" id="surprise">
+    <div class="container">
+
+      <div class="hero fade" id="hero">
+        <div class="photo" id="heroPhoto" style="background-image:url('assets/photo1.jpg')"></div>
+        <div class="text">
+          <h2>To the sister who means the world to me</h2>
+          <p class="message">You are loved, cherished, and celebrated today and always. <span style="font-weight:700">Happy Birthday!</span></p>
+        </div>
+      </div>
+
+      <div class="gallery fade" id="gallery">
+        <!-- Replace these with your photos / videos. Files expected in /assets/ -->
+        <div class="media">
+          <img src="assets/photo1.jpg" alt="photo 1" />
+        </div>
+        <div class="media">
+          <video controls playsinline preload="metadata">
+            <source src="assets/video1.mp4" type="video/mp4">
+            <!-- fallback message -->
+          </video>
+        </div>
+        <div class="media">
+          <img src="assets/photo2.jpg" alt="photo 2" />
+        </div>
+        <div class="media">
+          <img src="assets/photo3.jpg" alt="photo 3" />
+        </div>
+      </div>
+
+      <div class="section fade" id="notes">
+        <h3>Little memories</h3>
+        <p class="lead" style="color:var(--muted);">(Edit this message — this is a placeholder text you can change later.)</p>
+        <p>You're the kindest, funniest, and bravest person I know. Thank you for all the laughs and for being my forever friend. Love you loads 💖</p>
+      </div>
+
+      <footer class="fade">
+        <p>Made with ❤️ — open on mobile for the full experience</p>
+      </footer>
+
+    </div>
+  </div>
+
+  <script>
+    // Simple page flow: Landing -> Surprise
+    const openBtn = document.getElementById('openBtn');
+    const landing = document.getElementById('landing');
+    const surprise = document.getElementById('surprise');
+    const audio = document.getElementById('bg-audio');
+    const musicToggle = document.getElementById('musicToggle');
+    const toggleMusicBtn = document.getElementById('toggleMusicBtn');
+    const musicIcon = document.getElementById('musicIcon');
+
+    function showSurprise(){
+      // hide landing
+      landing.style.display = 'none';
+      // show surprise
+      surprise.style.display = 'block';
+      // update url (so it feels like a new page)
+      try{history.pushState({}, '', '#surprise');}catch(e){}
+
+      // reveal animate elements
+      setTimeout(()=>{
+        document.querySelectorAll('.fade').forEach((el,i)=>{setTimeout(()=>el.classList.add('show'), i*180)});
+      },100);
+
+      // Try to play audio. This is triggered after a user click so browsers should allow it.
+      if(audio){
+        const playPromise = audio.play();
+        if(playPromise !== undefined){
+          playPromise.then(()=>{
+            // show music controls when playing
+            musicToggle.style.display = 'flex';
+            musicIcon.textContent = '🔊';
+            toggleMusicBtn.textContent = 'Pause';
+          }).catch((err)=>{
+            // autoplay blocked or error
+            console.warn('Audio play prevented:', err);
+            musicToggle.style.display = 'none';
+          });
+        }
+      }
+
+      // Start confetti for a short burst
+      startConfettiBurst();
+    }
+
+    openBtn.addEventListener('click', (e)=>{e.preventDefault(); showSurprise();});
+
+    // Music toggle
+    toggleMusicBtn.addEventListener('click', ()=>{
+      if(audio.paused){audio.play();toggleMusicBtn.textContent='Pause';musicIcon.textContent='🔊'}
+      else{audio.pause();toggleMusicBtn.textContent='Play';musicIcon.textContent='🔈'}
+    });
+
+    // tiny confetti implementation (lightweight)
+    const confettiCanvas = document.getElementById('confetti');
+    const ctx = confettiCanvas.getContext('2d');
+    let confettiPieces = [];
+
+    function resizeCanvas(){confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight}
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function random(range){return Math.random()*range}
+
+    function spawnConfetti(count){
+      confettiPieces = [];
+      for(let i=0;i<count;i++){
+        confettiPieces.push({
+          x: random(confettiCanvas.width),
+          y: random(confettiCanvas.height)-confettiCanvas.height,
+          w: 6 + random(8),
+          h: 8 + random(8),
+          rot: random(360),
+          velY: 2 + random(4),
+          velX: -2 + random(4),
+          color: `hsl(${Math.floor(random(360))} 100% 60%)`,
+          rotSpeed: -0.1 + random(0.2)
+        })
+      }
+    }
+
+    function updateConfetti(){
+      ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+      for(let p of confettiPieces){
+        p.x += p.velX; p.y += p.velY; p.rot += p.rotSpeed; p.velY += 0.04; // gravity
+        ctx.save();
+        ctx.translate(p.x,p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+        ctx.restore();
+      }
+      // remove those offscreen
+      confettiPieces = confettiPieces.filter(p=>p.y < confettiCanvas.height + 40);
+    }
+
+    let confettiAnim;
+    function runConfetti(){updateConfetti(); confettiAnim = requestAnimationFrame(runConfetti)}
+    function startConfettiBurst(){spawnConfetti(80); if(!confettiAnim) runConfetti(); setTimeout(()=>{cancelAnimationFrame(confettiAnim); confettiAnim=null;}, 4500)}
+
+    // Allow direct hash navigation
+    if(location.hash === '#surprise'){
+      // if someone opens link with #surprise, show it after small timeout
+      setTimeout(()=>{showSurprise();}, 400);
+    }
+
+    // Accessibility: let user change title quickly
+    // You can edit these elements directly in the HTML later.
+  </script>
+</body>
+</html>
