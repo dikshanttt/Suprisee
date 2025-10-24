@@ -149,18 +149,43 @@
     }
 
     /* Photo sections */
-    .photo { 
-      width: min(920px,95%); 
-      height: min(74vh,820px); 
-      border-radius: 16px; 
-      overflow: hidden; 
-      position: relative; 
-      box-shadow: 0 24px 60px rgba(12,6,36,0.32); 
-      transition: transform 0.4s ease; 
-    }
-    .photo:hover { transform: scale(1.02); }
-    .photo img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: transform 10s ease, opacity 1s ease; }
-    .photo.show img { transform: scale(1); opacity: 1; }
+    /* Updated Photo Borders */
+.photo {
+  width: min(920px, 95%);
+  height: min(74vh, 820px);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 24px 60px rgba(12, 6, 36, 0.32);
+  transition: transform 0.4s ease;
+  border: 8px solid var(--accent); /* Increased border size */
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+  transition: transform 10s ease, opacity 1s ease;
+}
+
+.photo.show img {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* Updated Text Sizes */
+.card h1 {
+  font-size: clamp(18px, 5vw, 32px); /* Smaller text */
+}
+
+.text-card h3 {
+  font-size: clamp(20px, 5vw, 30px); /* Slightly smaller heading */
+}
+
+.text-card p {
+  font-size: clamp(14px, 3.5vw, 18px); /* Reduced text size for paragraphs */
+}
 
     /* New Caption Styling */
     .caption {
@@ -246,7 +271,7 @@
       </video>
       <div class="video-overlay content fade" id="videoOverlay">
         <h2 class="video-title" id="typeText"></h2>
-        <p>A little story — scroll slowly to feel it unfold.</p>
+        <p>A little surprise — scroll slowly to feel it unfold.</p>
       </div>
     </section>
 
@@ -266,7 +291,7 @@
       <p class="caption">Your eyes can stop time, heart that never does</p>
     </section>
 
-    <section><div class="text-card fade"><h3>Little memories</h3><p>You’re not just my sister — you’re the calm in my storm, the smile in my silence, the story I’ll never get tired of telling. 💜</p></div></section>
+    <section><div class="text-card fade"><h3>Little remainder</h3><p>You’re not just my sister — you’re the calm in my storm, the smile in my silence, the story I’ll never get tired of telling. 💜</p></div></section>
 
     <section><footer class="fade"><p>Made with ❤️ — Happy Birthday! You’re irreplaceable 💫</p></footer></section>
   </div>
