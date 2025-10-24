@@ -238,10 +238,40 @@
 
     video::-webkit-media-controls { display: none !important; }
 
-    @media (max-width:720px){
-      .card{padding:20px}
-      .video-title{font-size:clamp(18px,8vw,30px)}
-    }
+    @media (max-width: 720px) {
+  .photo {
+    width: 90%;           /* Slightly smaller to fit mobile screens */
+    height: auto;         /* Let height adjust automatically */
+    border: 6px solid var(--accent); /* Slightly thinner on mobile */
+  }
+  
+  .photo img {
+    width: 100%;
+    height: auto;          /* Maintain aspect ratio */
+  }
+
+  .card h1 {
+    font-size: clamp(16px, 6vw, 26px); /* smaller main title */
+  }
+
+  .text-card h3 {
+    font-size: clamp(18px, 5vw, 24px); /* smaller heading */
+  }
+
+  .text-card p {
+    font-size: clamp(12px, 3.5vw, 16px); /* smaller paragraph */
+  }
+
+  .btn {
+    padding: 10px 18px;     /* smaller button */
+    font-size: 14px;
+  }
+
+  .video-title {
+    font-size: clamp(18px, 7vw, 28px); /* video overlay text smaller */
+  }
+}
+
   </style>
 </head>
 <body>
