@@ -4,152 +4,141 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>To the sister who means the world to me</title>
+  <meta name="robots" content="noindex">
 
   <style>
-    /* ----------------- THEME VARIABLES ----------------- */
+    /* ---------- THEME VARIABLES ---------- */
     :root{
       --bg: #A389E8;           /* deep lavender */
       --accent: #7B2CBF;       /* bright violet (buttons/highlights) */
       --accent-2: #D8B4FE;     /* soft lilac (gradients) */
       --text: #2E026D;         /* main text */
       --muted: #5D3A9B;        /* muted text */
-      --snap-duration: 700ms;
+      --max-width: 920px;
     }
 
-    /* ----------------- RESET ----------------- */
+    /* ---------- RESET / BASE ---------- */
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; -webkit-tap-highlight-color: transparent;}
-    a{color:inherit}
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale; -webkit-tap-highlight-color: transparent;}
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--max-width);margin:0 auto;padding:20px}
 
-    /* ----------------- LAYOUT / SNAP ----------------- */
-    /* We'll use a single scrolling container with full-screen sections that snap */
-    .wrap{height:100vh;overflow-y:auto;scroll-snap-type:y mandatory;scroll-behavior:smooth;}
+    /* ---------- LANDING (FIRST SEPARATE SCREEN) ---------- */
+    .landing-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px;text-align:center;}
+    .card{width:min(760px,96%);background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));border-radius:18px;padding:28px;box-shadow:0 14px 40px rgba(16,8,40,0.24)}
+    .card h1{font-size:clamp(22px,6vw,38px);margin:0 0 12px;color:var(--accent)}
+    .lead{margin:8px 0 18px;color:var(--muted)}
+    .btn{display:inline-block;padding:12px 20px;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;font-weight:700;box-shadow:0 10px 30px rgba(16,8,40,0.18)}
+
+    /* ---------- CINEMATIC SCROLL CONTAINER (hidden until open) ---------- */
+    .wrap{display:none;height:100vh;overflow-y:auto;scroll-snap-type:y mandatory;scroll-behavior:smooth;}
     section{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px;scroll-snap-align:start;position:relative}
-    .content{max-width:920px;width:100%;margin:0 auto;text-align:center}
+    .content{max-width:var(--max-width);width:100%;margin:0 auto;text-align:center}
 
-    /* Landing card (first screen) */
-    .landing-card{background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));border-radius:18px;padding:28px;box-shadow:0 10px 40px rgba(0,0,0,0.12);width:min(760px,96%);}
-    .landing-card h1{margin:0;font-size:clamp(22px,5vw,36px);color:var(--accent)}
-    .lead{margin:10px 0 18px;color:var(--muted)}
-    .btn{display:inline-block;padding:12px 20px;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,0.15);}
+    /* ---------- HERO VIDEO ---------- */
+    .hero-video{width:100%;height:100vh;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background: linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0.12));}
+    .hero-video video{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);min-width:100%;min-height:100%;width:auto;height:auto;object-fit:cover;filter:brightness(0.95);will-change:transform,opacity}
+    .video-overlay{position:relative;z-index:3;color:white;padding:24px;text-align:center;pointer-events:none}
+    .video-title{font-size:clamp(22px,6vw,40px);margin:0 0 10px;color:var(--accent);text-shadow:0 12px 40px rgba(30,8,70,0.45)}
+    .video-sub{margin:0;color:rgba(255,255,255,0.95);font-weight:600}
 
-    /* Fullscreen hero video */
-    .hero-video{
-      width:100%;height:100vh;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;
-      background:linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.18));
-    }
-    .hero-video video{
-      position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);min-width:100%;min-height:100%;width:auto;height:auto;object-fit:cover;filter:brightness(0.95);
-    }
-    .hero-video .overlay{
-      position:relative;z-index:3;color:white;padding:20px;text-align:center;backdrop-filter: blur(0.4px);
-    }
-    .hero-video h2{font-size:clamp(20px,6vw,42px);margin:0 0 10px;text-shadow:0 6px 24px rgba(22,6,46,0.45)}
-    .hero-video p{margin:0;color:rgba(255,255,255,0.9);font-weight:600}
+    /* ---------- PHOTO SECTIONS (slow cinematic fade + gentle zoom) ---------- */
+    .photo-section{display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));overflow:hidden}
+    .photo{width:min(920px,95%);height:min(74vh,820px);border-radius:16px;overflow:hidden;box-shadow:0 24px 60px rgba(12,6,36,0.32);transform:translateZ(0);position:relative}
+    .photo img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.08);transition:transform 12s cubic-bezier(.2,.7,.2,1),opacity 1.3s ease;opacity:0.92}
+    .photo.show img{transform:scale(1);opacity:1}
 
-    /* Photo sections — centered with fade effect */
-    .photo-section{display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.02));}
-    .photo-section .photo{
-      width:min(920px,95%);height:min(70vh,760px);border-radius:14px;overflow:hidden;box-shadow:0 14px 40px rgba(21,6,46,0.25);position:relative;
-    }
-    .photo img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.03);transition:transform 8s cubic-bezier(.2,.7,.2,1);} /* gentle zoom */
-    .photo.active img{transform:scale(1);} /* reset scale on active for subtle motion */
-
-    /* Text section */
-    .text-section{color:var(--text);background:transparent}
-    .text-card{background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));border-radius:14px;padding:26px;max-width:780px;box-shadow:0 10px 30px rgba(0,0,0,0.12)}
+    /* ---------- TEXT / MESSAGE ---------- */
+    .text-section{background:transparent}
+    .text-card{background:linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.94));border-radius:14px;padding:26px;max-width:780px;box-shadow:0 14px 40px rgba(16,8,40,0.18)}
     .text-card h3{margin:0 0 12px;color:var(--accent)}
-    .text-card p{margin:0;color:var(--muted);line-height:1.5}
+    .text-card p{margin:0;color:var(--muted);line-height:1.55;font-size:16px}
 
-    /* Footer small */
-    footer{padding:30px 10px;color:rgba(255,255,255,0.9);text-align:center;font-size:13px}
+    /* ---------- FOOTER ---------- */
+    footer{padding:30px 10px;color:rgba(255,255,255,0.95);text-align:center;font-size:14px}
 
-    /* ----------------- FADE-IN ANIMATIONS ----------------- */
-    .fade{opacity:0;transform:translateY(24px);transition:opacity .9s ease, transform .9s ease}
+    /* ---------- SLOW CINEMATIC FADE STYLES ---------- */
+    .fade{opacity:0;transform:translateY(36px);transition:opacity 1.2s ease, transform 1.2s ease}
     .fade.show{opacity:1;transform:none}
-    /* heavier title glow */
-    .glow{color:var(--accent);text-shadow:0 0 10px var(--accent),0 0 26px var(--accent-2)}
+    /* additional slow fade for overlay elements */
+    .overlay-fade{opacity:0;transform:translateY(28px);transition:opacity 1.6s ease, transform 1.6s ease}
+    .overlay-fade.show{opacity:1;transform:none}
 
-    /* ----------------- DOT NAV (optional) ----------------- */
-    .dots{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:1200;display:flex;flex-direction:column;gap:10px}
-    .dot{width:10px;height:10px;border-radius:999px;background:rgba(255,255,255,0.45);box-shadow:0 3px 8px rgba(0,0,0,0.2);opacity:0.6}
-    .dot.active{background:linear-gradient(180deg,var(--accent),var(--accent-2));transform:scale(1.2);opacity:1}
+    /* prevent any visible UI controls (immersive) */
+    video::-webkit-media-controls{display:none !important}
+    video::-webkit-media-controls-enclosure{display:none !important}
 
-    /* ----------------- MUSIC TOGGLE ----------------- */
-    .music-toggle{position:fixed;left:16px;bottom:18px;background:rgba(255,255,255,0.95);padding:8px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.08);display:flex;gap:10px;align-items:center;z-index:1200}
-    .music-toggle button{background:none;border:0;padding:6px 10px;border-radius:8px;font-weight:700}
-
-    /* responsive tweaks */
+    /* responsive */
     @media (max-width:720px){
-      .photo img{transition:transform 14s cubic-bezier(.2,.7,.2,1)}
-      .hero-video h2{font-size:clamp(18px,8vw,32px)}
-      .dots{right:10px}
+      .card{padding:20px}
+      .video-title{font-size:clamp(18px,8vw,30px)}
+      .photo img{transition:transform 18s cubic-bezier(.2,.7,.2,1)}
     }
   </style>
 </head>
 <body>
 
-  <!-- BACKGROUND MUSIC (plays after user clicks Open) -->
+  <!-- BACKGROUND MUSIC (no controls, plays after user click) -->
   <audio id="bg-audio" loop preload="auto">
     <source src="assets/song.mp3" type="audio/mpeg">
-    <!-- Replace with your background music file -->
   </audio>
 
-  <!-- muted video will autoplay after open -->
-  <div class="wrap" id="wrap">
-
-    <!-- SECTION 0: Landing / Intro -->
-    <section id="landing" aria-label="Landing">
-      <div class="content">
-        <div class="landing-card fade" id="landingCard">
-          <h1>Shh... a small surprise</h1>
-          <p class="lead">Click the button below to open your surprise 🎁</p>
-          <a id="openBtn" class="btn" href="#">Open Your Surprise 🎉</a>
-          <p style="margin-top:12px;color:var(--muted);font-size:14px">Designed with love — open on mobile for the best experience.</p>
-        </div>
+  <!-- ---------- Landing (first page, separate) ---------- -->
+  <main class="landing-wrap" id="landing">
+    <div class="container">
+      <div class="card fade" id="landingCard">
+        <h1>Shh... a small surprise</h1>
+        <p class="lead">Click the button below to open your surprise 🎁</p>
+        <a id="openBtn" class="btn" href="#">Open Your Surprise 🎉</a>
+        <p style="margin-top:12px;color:var(--muted);font-size:14px">Designed with love — open on mobile for the best experience.</p>
       </div>
-    </section>
+    </div>
+  </main>
 
-    <!-- SECTION 1: Hero video (muted autoplay) -->
-    <section id="videoSection" class="hero-video" aria-label="Video section">
+  <!-- ---------- Cinematic scrollable content (hidden until open) ---------- -->
+  <div class="wrap" id="wrap" aria-hidden="true">
+
+    <!-- Section: HERO VIDEO (muted autoplay) -->
+    <section id="videoSection" class="hero-video" aria-label="Video">
       <video id="heroVideo" playsinline muted preload="auto" webkit-playsinline>
         <source src="assets/video.mp4" type="video/mp4">
-        <!-- If video is missing, fallback to background image -->
+        <!-- fallback: background image if video missing -->
       </video>
-      <div class="overlay content fade" id="videoOverlay">
-        <h2 class="glow">To the sister who means the world to me</h2>
-        <p class="lead">A tiny story — scroll or watch as it unfolds.</p>
+      <div class="video-overlay content overlay-fade" id="videoOverlay">
+        <h2 class="video-title">To the sister who means the world to me</h2>
+        <p class="video-sub">A tiny story — scroll slowly to feel it unfold.</p>
       </div>
     </section>
 
-    <!-- SECTION 2: Photo 1 -->
-    <section class="photo-section" data-index="2" aria-label="Memory 1">
+    <!-- Photo 1 -->
+    <section class="photo-section" aria-label="Memory 1">
       <div class="content">
-        <div class="photo fade" id="photo1">
-          <img src="assets/image1.jpg" alt="Memory photo 1">
-        </div>
+        <div class="photo fade" id="photo1"><img src="assets/image1.jpg" alt="memory 1"></div>
       </div>
     </section>
 
-    <!-- SECTION 3: Photo 2 -->
-    <section class="photo-section" data-index="3" aria-label="Memory 2">
+    <!-- Photo 2 -->
+    <section class="photo-section" aria-label="Memory 2">
       <div class="content">
-        <div class="photo fade" id="photo2">
-          <img src="assets/image2.jpg" alt="Memory photo 2">
-        </div>
+        <div class="photo fade" id="photo2"><img src="assets/image2.jpg" alt="memory 2"></div>
       </div>
     </section>
 
-    <!-- SECTION 4: Photo 3 -->
-    <section class="photo-section" data-index="4" aria-label="Memory 3">
+    <!-- Photo 3 -->
+    <section class="photo-section" aria-label="Memory 3">
       <div class="content">
-        <div class="photo fade" id="photo3">
-          <img src="assets/image3.jpg" alt="Memory photo 3">
-        </div>
+        <div class="photo fade" id="photo3"><img src="assets/image3.jpg" alt="memory 3"></div>
       </div>
     </section>
 
-    <!-- SECTION 5: Personal message -->
+    <!-- Photo 4 (optional) -->
+    <section class="photo-section" aria-label="Memory 4">
+      <div class="content">
+        <div class="photo fade" id="photo4"><img src="assets/image4.jpg" alt="memory 4"></div>
+      </div>
+    </section>
+
+    <!-- Message -->
     <section class="text-section" aria-label="Message">
       <div class="content">
         <div class="text-card fade" id="messageCard">
@@ -160,7 +149,7 @@
       </div>
     </section>
 
-    <!-- SECTION 6: Footer / Ending -->
+    <!-- Ending -->
     <section aria-label="Ending">
       <div class="content">
         <footer class="fade">
@@ -170,170 +159,121 @@
     </section>
   </div>
 
-  <!-- optional UI -->
-  <div class="dots" id="dots" aria-hidden="true"></div>
-  <div class="music-toggle" id="musicUI" style="display:none">
-    <span id="musicIcon">🔊</span>
-    <button id="toggleMusicBtn">Pause</button>
-  </div>
-
   <script>
-    /* ========== Elements ========== */
-    const wrap = document.getElementById('wrap');
+    /********** Elements **********/
     const openBtn = document.getElementById('openBtn');
-    const bgAudio = document.getElementById('bg-audio');
+    const landing = document.getElementById('landing');
+    const landingCard = document.getElementById('landingCard');
+    const wrap = document.getElementById('wrap');
     const heroVideo = document.getElementById('heroVideo');
-    const musicUI = document.getElementById('musicUI');
-    const toggleMusicBtn = document.getElementById('toggleMusicBtn');
-    const musicIcon = document.getElementById('musicIcon');
+    const bgAudio = document.getElementById('bg-audio');
 
-    // sections list (in order)
-    const sections = Array.from(document.querySelectorAll('section'));
-    const fadeEls = Array.from(document.querySelectorAll('.fade'));
+    // fades and photo elements
+    const fades = Array.from(document.querySelectorAll('.fade'));
+    const photos = Array.from(document.querySelectorAll('.photo'));
 
-    // Dots navigation
-    const dotsContainer = document.getElementById('dots');
-    sections.forEach((s, i) => {
-      const d = document.createElement('div');
-      d.className = 'dot' + (i === 0 ? ' active' : '');
-      d.dataset.index = i;
-      d.addEventListener('click', ()=> scrollToIndex(i));
-      dotsContainer.appendChild(d);
+    /********** Helper: show element with fade **********/
+    function reveal(el, delay = 0){
+      if(!el) return;
+      setTimeout(()=> el.classList.add('show'), delay);
+    }
+
+    /********** Landing initial reveal (small) **********/
+    document.addEventListener('DOMContentLoaded', ()=> {
+      // small reveal for landing card
+      reveal(landingCard, 80);
     });
-    const dots = Array.from(document.querySelectorAll('.dot'));
 
-    /* ========== Behavior settings ========== */
-    const AUTO_ADVANCE = true;           // auto-advance between sections (cinematic)
-    const ADVANCE_DELAY = 4200;         // ms before advancing to next section
-    let autoTimer = null;
-    let userInteracted = false;
-
-    /* ========== Helpers ========== */
-    function scrollToIndex(index){
-      if(index < 0 || index >= sections.length) return;
-      sections[index].scrollIntoView({behavior:'smooth', block:'start'});
-    }
-
-    function setActiveDot(index){
-      dots.forEach(d => d.classList.remove('active'));
-      const node = dots[index];
-      if(node) node.classList.add('active');
-    }
-
-    /* ========== IntersectionObserver: trigger fade-in & update dots ========== */
-    const observerOptions = {threshold: 0.45};
-    const sectionObserver = new IntersectionObserver((entries)=>{
-      entries.forEach(entry=>{
-        if(entry.isIntersecting){
-          // mark fades inside this section
-          const fades = entry.target.querySelectorAll('.fade');
-          fades.forEach((el, idx) => {
-            setTimeout(()=> el.classList.add('show'), idx * 180);
-          });
-
-          // update dot
-          const idx = sections.indexOf(entry.target);
-          if(idx >= 0) setActiveDot(idx);
-
-          // start auto-advance (only if not user-interacted)
-          if(AUTO_ADVANCE && !userInteracted){
-            clearTimeout(autoTimer);
-            autoTimer = setTimeout(()=>{
-              const next = Math.min(sections.length - 1, idx + 1);
-              scrollToIndex(next);
-            }, ADVANCE_DELAY);
-          }
-        } else {
-          // optional: remove show to allow re-animation when revisited
-          const fades = entry.target.querySelectorAll('.fade');
-          fades.forEach(el => el.classList.remove('show'));
-        }
-      });
-    }, observerOptions);
-
-    sections.forEach(sec => sectionObserver.observe(sec));
-
-    /* ========== Auto-play video muted & background music handling ========== */
+    /********** Start the cinematic experience **********/
     function startExperience(){
-      // hide landing card instantly (snap to video section)
-      scrollToIndex(1);
+      // hide landing
+      landing.style.display = 'none';
 
-      // play muted video (user clicked -> allowed)
-      try{
+      // show wrap (scroll container)
+      wrap.style.display = 'block';
+      wrap.setAttribute('aria-hidden', 'false');
+
+      // ensure top of wrap is at start
+      wrap.scrollTop = 0;
+
+      // try play video (muted) and background audio (bgAudio)
+      try {
+        // reset and play video muted
         heroVideo.currentTime = 0;
         heroVideo.play().catch(e => console.warn('video play prevented', e));
-      }catch(e){console.warn(e)}
+      } catch(e) { console.warn(e) }
 
-      // play background audio (user clicked -> allowed)
+      // play background audio (user click allowed)
       bgAudio.currentTime = 0;
       const playPromise = bgAudio.play();
       if(playPromise !== undefined){
-        playPromise.then(()=>{
-          musicUI.style.display = 'flex';
-          toggleMusicBtn.textContent = 'Pause';
-          musicIcon.textContent = '🔊';
-        }).catch(err=>{
-          console.warn('bgAudio prevented', err);
-          musicUI.style.display = 'none';
+        playPromise.then(()=> {
+          // playing successfully; nothing else to show (immersive)
+        }).catch(err => {
+          // if play prevented, nothing we can do without user interaction, but click already happened
+          console.warn('bgAudio play prevented:', err);
         });
-      }else{
-        musicUI.style.display = 'flex';
       }
 
-      // start initial fade animations for the video overlay
-      document.querySelectorAll('#videoSection .fade').forEach((el,i)=>setTimeout(()=>el.classList.add('show'), i*150));
+      // reveal video overlay slowly
+      reveal(document.getElementById('videoOverlay'), 200);
+
+      // start observing sections for slow cinematic fade
+      animateOnScroll();
     }
 
-    openBtn.addEventListener('click', (e)=>{
+    openBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      userInteracted = false; // allow auto advance until user interacts
       startExperience();
     });
 
-    // If user manually scrolls / touches / uses keyboard — mark as interacted and stop automated advancement
-    function onUserInteraction(){
-      userInteracted = true;
-      clearTimeout(autoTimer);
+    /********** IntersectionObserver for slow cinematic fades **********/
+    function animateOnScroll(){
+      const options = {threshold: 0.45};
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting){
+            // Add 'show' to fades inside the section (staggered)
+            const fadesIn = entry.target.querySelectorAll('.fade, .overlay-fade');
+            fadesIn.forEach((el, i) => setTimeout(()=> {
+              el.classList.add('show');
+              // if it's a photo, also add photo.show for gentle zoom reset
+              if(el.classList.contains('photo')) el.classList.add('show');
+            }, i * 260));
+          } else {
+            // keep the cinematic feel: do not force-hide when scrolled away (so fades remain)
+            // If you'd like repeats, uncomment next lines to allow re-animation:
+            // const fadesOut = entry.target.querySelectorAll('.fade, .overlay-fade');
+            // fadesOut.forEach(el => el.classList.remove('show'));
+          }
+        });
+      }, options);
+
+      // observe each section
+      const secs = document.querySelectorAll('section');
+      secs.forEach(s => observer.observe(s));
     }
-    ['wheel','touchstart','keydown','mousedown','touchmove'].forEach(ev => window.addEventListener(ev, onUserInteraction, {passive:true}));
 
-    /* ========== Music toggle UI ========== */
-    toggleMusicBtn.addEventListener('click', ()=>{
-      if(bgAudio.paused){ bgAudio.play(); toggleMusicBtn.textContent = 'Pause'; musicIcon.textContent = '🔊'; }
-      else { bgAudio.pause(); toggleMusicBtn.textContent = 'Play'; musicIcon.textContent = '🔈'; }
-    });
-
-    /* ========== When the video ends: optionally advance to next section ========== */
-    heroVideo.addEventListener('ended', ()=>{
-      // advance to the next section after short delay
-      const idx = sections.indexOf(document.getElementById('videoSection'));
-      setTimeout(()=> scrollToIndex(Math.min(sections.length-1, idx+1)), 900);
-    });
-
-    /* ========== Accessibility: allow keyboard arrow navigation ========== */
+    /********** Accessibility / swipe support: allow basic keyboard navigation **********/
     window.addEventListener('keydown', (e)=>{
-      if(e.key === 'ArrowDown' || e.key === 'PageDown'){ onUserInteraction(); e.preventDefault(); window.scrollBy({top: window.innerHeight, behavior:'smooth'}); }
-      if(e.key === 'ArrowUp' || e.key === 'PageUp'){ onUserInteraction(); e.preventDefault(); window.scrollBy({top: -window.innerHeight, behavior:'smooth'}); }
+      if(wrap.style.display === 'none') return;
+      if(e.key === 'ArrowDown' || e.key === 'PageDown'){ e.preventDefault(); wrap.scrollBy({top: window.innerHeight, behavior:'smooth'}); }
+      if(e.key === 'ArrowUp' || e.key === 'PageUp'){ e.preventDefault(); wrap.scrollBy({top: -window.innerHeight, behavior:'smooth'}); }
     });
 
-    /* ========== Ensure initial dot state (landing active) ========== */
-    setActiveDot(0);
-
-    /* ========== If someone opens with #surprise, treat as clicked open ======== */
+    /********** If page loaded with #surprise, start immediately **********/
     if(location.hash === '#surprise'){
-      // small delay to allow page to render
-      setTimeout(()=> { startExperience(); }, 300);
+      // small delay to allow render
+      setTimeout(()=> startExperience(), 250);
     }
 
-    /* ========== NOTES for you ==========
+    /********** Note to you **********
       - Put your muted video at: assets/video.mp4
-      - Put background music at: assets/song.mp3
-      - Put photos at: assets/image1.jpg, image2.jpg, image3.jpg
-      - Change or add photo sections by copying a <section class="photo-section"> block.
-      - Auto-advance will occur every ADVANCE_DELAY unless user interacts (scroll/touch/keypress).
-      - The video is muted; only bg audio plays. You can pause/play via the music UI.
-    ===================================================== */
-
+      - Put background music at: assets/song.mp3 (only background music will play)
+      - Put photos at: assets/image1.jpg, image2.jpg, image3.jpg, image4.jpg
+      - You can add/remove <section class="photo-section"> blocks to change the story length.
+      - No UI controls, no page indicators — fully immersive slow cinematic fade.
+    ****************************************/
   </script>
 </body>
 </html>
